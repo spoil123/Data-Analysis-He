@@ -87,22 +87,37 @@ Users are then **scored and segmented** by combining these dimensions, and each 
 
 ```
 Data-Analysis-He/
-├── Rfm_User_Value_Segmentation.ipynb          # Main project notebook
-├── Rfm_User_Value_Segmentation_Handcrafted.ipynb  # Re-implementation from scratch
-├── Project_Deep_Dive.docx                     # Detailed project interpretation (supporting doc)
-├── README.md                                  # This file
-├── requirements.txt                           # Python dependencies
-├── .gitignore                                 # Ignore data / temp files for privacy
-└── LICENSE                                    # MIT License
+├── Rfm_User_Value_Segmentation.ipynb              # Main project notebook (full pipeline, reference implementation)
+├── Rfm_User_Value_Segmentation_Handcrafted.ipynb  # Independent from-scratch re-implementation (cross-verification)
+├── data/schema.md                                 # Field dictionary (data schema)
+├── figures/                                       # Generated analysis charts (EDA / radar / ROI)
+├── Project_Deep_Dive.docx                         # Detailed project interpretation (supporting doc)
+├── README.md                                      # This file
+├── requirements.txt                               # Python dependencies
+├── .gitignore                                     # Ignore data / temp files for privacy
+└── LICENSE                                        # MIT License
 ```
 
 ### File Descriptions
 
 | File | Description |
 |------|-------------|
-| `Rfm_User_Value_Segmentation.ipynb` | The complete analysis pipeline: quality checks → feature engineering → EDA → segmentation → profiling → ROI estimation |
-| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | An independent re-implementation of the same analysis, written from scratch to verify the methodology |
+| `Rfm_User_Value_Segmentation.ipynb` | **Main notebook** — the complete analysis pipeline: quality checks → feature engineering → EDA → segmentation → profiling → ROI estimation |
+| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **Handcrafted notebook** — an independent from-scratch re-implementation of the same methodology |
+| `data/schema.md` | Field dictionary for the input dataset (types, meaning, RFM-I mapping) |
+| `figures/` | Generated analysis charts: EDA distributions, correlation matrix, segment distribution, segment radar, ROI comparison |
 | `Project_Deep_Dive.docx` | A deep-dive write-up explaining the business context, method rationale, and results |
+
+### Which notebook to read?
+
+The repository intentionally ships **two parallel notebooks covering the same methodology from different angles** — they are complementary, not duplicates:
+
+| Notebook | Role |
+|----------|------|
+| `Rfm_User_Value_Segmentation.ipynb` | **Main / reference implementation.** A complete, well-commented pipeline that tells the full story end-to-end (quality audit → feature engineering → EDA → segmentation → profiling → ROI). Reads `data/user_personalized_features.xlsx`. |
+| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **From-scratch re-implementation.** Written independently to cross-verify the methodology and demonstrate reproducible coding without reference. Reads `data/user_personalized_features.csv`. |
+
+Both produce equivalent segment-level conclusions and corroborate each other. To follow the analysis step by step, start with the main notebook; to sanity-check the method against a clean independent re-implementation, compare with the handcrafted one.
 
 ---
 
@@ -124,11 +139,14 @@ pip install -r requirements.txt
 
 > **Note:** The original raw data is **not included** in this repository for privacy reasons (see [Data Source & Privacy](#data-source--privacy)).
 
-The notebook expects an Excel file `user_personalized_features.xlsx` with the following schema (1,000 rows × 14 columns):
+| Notebook | Expected file (relative to repo root) |
+|----------|---------------------------------------|
+| Main (`Rfm_User_Value_Segmentation.ipynb`) | `data/user_personalized_features.xlsx` |
+| Handcrafted (`Rfm_User_Value_Segmentation_Handcrafted.ipynb`) | `data/user_personalized_features.csv` |
+
+Just drop your data file into the `data/` directory with the expected name — both notebooks load these **relative paths automatically, no code changes needed**. The expected schema (1,000 rows × 14 columns) is documented in [data/schema.md](data/schema.md):
 
 `User_ID, Age, Gender, Location, Income, Interests, Last_Login_Days_Ago, Purchase_Frequency, Average_Order_Value, Total_Spending, Product_Category_Preference, Time_Spent_on_Site_Minutes, Pages_Viewed, Newsletter_Subscription`
-
-Place the file at the path specified in the notebook (currently `D:/工作/RFM项目/user_personalized_features.xlsx`) — **update the `input_path` variable** in the notebook to point to your local file.
 
 ### 3. Run
 

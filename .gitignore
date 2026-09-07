@@ -20,11 +20,15 @@ env/
 *.feather
 
 # Analysis outputs / generated figures
-rfm_analysis/
+# NOTE: charts under figures/ are committed as deliverable outputs;
+#       other generated images / raw analysis dirs stay ignored
 output/
+rfm_analysis/
 *.png
 *.jpg
 *.jpeg
+!figures/
+!figures/*.png
 
 # OS / editor
 .DS_Store
