@@ -1,189 +1,177 @@
----
-AIGC:
-    Label: "1"
-    ContentProducer: 001191440300708461136T1XGW3
-    ProduceID: 91f7161bc71e2c663036f04b43335e19_f7574ad4aa9711f1b128525400f8a581
-    ReservedCode1: 7ufS6iOp/6jhVLZiQDSSLkRL5yDUg4qMeYq2CrRIst4naW/dnIJPsi8ZVq63foPUNzmh8YAug/FHsa0p0wsWRE7v9i6N+q02Oconl9YwAZfFBzrkrvsviMqvjAc+DiHqeDSR4KNEjFGyf2vCCOoyq7tfKCtg/6WxJYKhO+RUhUXtPB4YoBCRCAptBbM=
-    ContentPropagator: 001191440300708461136T1XGW3
-    PropagateID: 91f7161bc71e2c663036f04b43335e19_f7574ad4aa9711f1b128525400f8a581
-    ReservedCode2: 7ufS6iOp/6jhVLZiQDSSLkRL5yDUg4qMeYq2CrRIst4naW/dnIJPsi8ZVq63foPUNzmh8YAug/FHsa0p0wsWRE7v9i6N+q02Oconl9YwAZfFBzrkrvsviMqvjAc+DiHqeDSR4KNEjFGyf2vCCOoyq7tfKCtg/6WxJYKhO+RUhUXtPB4YoBCRCAptBbM=
----
+# 电商用户价值分层与精准营销（RFM-I 优化模型）
 
-# Data Analysis - E-commerce User Value Segmentation & Precision Marketing
+一个端到端的数据分析项目：在经典 **RFM** 模型基础上，引入 **意向深度（Intent）** 等扩展维度，构建 **RFM-I 优化模型**，对电商用户进行细粒度价值分层，并给出有量化 ROI 支撑的精准营销策略。
 
-An end-to-end data analysis project that segments e-commerce users by **value** using an extended **RFM-I (Recency, Frequency, Monetary, Intent) framework**, and derives **precision marketing strategies** with measurable ROI estimates.
-
-This project demonstrates a complete data science workflow: data quality inspection → feature engineering → exploratory data analysis (EDA) → user segmentation → segment profiling → campaign ROI estimation.
+本项目完整覆盖数据分析工作流：**数据质量检查 → 特征工程 → 探索性数据分析（EDA）→ 用户分层 → 分层画像 → 营销 ROI 测算**。
 
 ---
 
-## Table of Contents
+## 目录
 
-- [Project Overview](#project-overview)
-- [Core Method: The RFM-I Model](#core-method-the-rfm-i-model)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [How to Run](#how-to-run)
-- [Key Findings](#key-findings)
-- [Data Source & Privacy](#data-source--privacy)
+- [项目概述](#项目概述)
+- [核心方法：RFM-I 模型](#核心方法rfm-i-模型)
+- [技术栈](#技术栈)
+- [项目结构](#项目结构)
+- [如何运行](#如何运行)
+- [关键发现](#关键发现)
+- [数据来源与隐私](#数据来源与隐私)
 - [License](#license)
 
 ---
 
-## Project Overview
+## 项目概述
 
-Customer value segmentation is a fundamental problem in e-commerce marketing. Instead of treating all users the same, businesses must identify **who are the most valuable customers** and **how to allocate marketing budgets** to maximize return.
+用户价值分层是电商营销领域的基础问题。与其对所有用户一视同仁，企业必须回答两个问题：**谁是真正高价值的用户**，以及 **营销预算应该投给谁** 才能获得最大回报。
 
-This project takes a standard transactional dataset (1,000 users × 14 features) and:
+本项目基于一份标准电商数据集（1000 名用户 × 14 个特征），完成以下工作：
 
-1. Audits data quality (missing values, outliers).
-2. Engineers an **extended RFM-I feature set**, going beyond the classic RFM by adding user *Intent* (engagement depth), *Friction* (purchase resistance), *Loyalty* and *Income level*.
-3. Performs exploratory data analysis to understand user behaviour.
-4. Segments users into distinct value groups.
-5. Profiles each segment with radar charts and distribution plots.
-6. Compares **traditional RFM vs. optimised RFM-I** marketing strategies via ROI simulation.
+1. 数据质量审计（缺失值、异常值检查）；
+2. 构建 **RFM-I 扩展特征集**，在经典 RFM 之外引入用户 *意向深度（Intent）*、*转化摩擦（Friction）*、*活跃连接度（Loyalty）* 与 *购买力水平（Income）* 等维度；
+3. 通过探索性数据分析理解用户行为；
+4. 将用户细分为具有不同营销价值的人群；
+5. 用雷达图和分布柱状图刻画各人群特征画像；
+6. 通过 ROI 模拟对比 **传统 RFM 策略** 与 **优化 RFM-I 策略** 的营销效果。
 
-The results show that the optimised RFM-I strategy significantly outperforms the traditional approach in marginal ROI (**33.5% vs 4.0%**), while spending less.
-
----
-
-## Core Method: The RFM-I Model
-
-### Classic RFM
-
-| Metric | Meaning |
-|--------|---------|
-| **R** (Recency) | How recently a user made a purchase |
-| **F** (Frequency) | How often a user purchases |
-| **M** (Monetary) | How much a user spends |
-
-### Extended RFM-I Features
-
-To capture behaviour that classic RFM misses, additional engineered features are introduced:
-
-| Feature | Meaning | Construction |
-|---------|---------|--------------|
-| **I_Score** | Intent depth — how engaged the user is | `0.5 * Time_Spent_Norm + 0.5 * Pages_Viewed_Norm` (min-max normalised) |
-| **Friction** | Purchase resistance | `Pages_Viewed / (Purchase_Frequency + 1)` |
-| **L_Score** | Loyalty / activity connection | Rule-based from newsletter subscription & recency of login (scale 1–3) |
-| **Income_Level** | Purchasing power background | Quantile-based (Low / Medium / High by 33% & 66% percentiles) |
-| **Interest_Match** | User-product category fit | `Interests == Product_Category_Preference` |
-
-Users are then **scored and segmented** by combining these dimensions, and each segment receives a tailored marketing strategy.
+结果表明：优化后的 RFM-I 策略在边际 ROI 上**显著优于传统方案（33.5% vs 4.0%）**，同时花费更少。
 
 ---
 
-## Tech Stack
+## 核心方法：RFM-I 模型
 
-- **Python 3** (Jupyter Notebook environment)
-- **pandas** — data loading, cleaning, feature engineering
-- **numpy** — numerical computation
-- **matplotlib** — EDA visualisation, radar charts, distribution plots
-- **openpyxl** — reading `.xlsx` input data
+### 经典 RFM
+
+| 维度 | 含义 |
+| --- | --- |
+| **R**（Recency） | 用户最近一次购买的间隔 |
+| **F**（Frequency） | 用户购买频率 |
+| **M**（Monetary） | 用户累计消费金额 |
+
+### 扩展特征（RFM-I）
+
+为捕捉经典 RFM 遗漏的行为信号，额外构建以下特征：
+
+| 特征 | 含义 | 构造方式 |
+| --- | --- | --- |
+| **I_Score** | 意向深度——用户参与/购买意向强度 | `0.5 * Time_Spent_Norm + 0.5 * Pages_Viewed_Norm`（min-max 归一化） |
+| **Friction** | 转化摩擦——购买路径上的阻力 | `Pages_Viewed / (Purchase_Frequency + 1)` |
+| **L_Score** | 活跃连接度 | 基于邮件订阅状态与最近登录间隔的规则打分（1~3 分） |
+| **Income_Level** | 购买力背景 | 按收入三分位划分（Low / Medium / High，33% 与 66% 分位） |
+| **Interest_Match** | 用户兴趣与购买品类匹配度 | `Interests == Product_Category_Preference` |
+
+将上述维度综合打分后，对用户进行**价值分层**，并为每一类人群匹配针对性的营销策略。
 
 ---
 
-## Project Structure
+## 技术栈
+
+- **Python 3**（Jupyter Notebook 环境）
+- **pandas** — 数据加载、清洗与特征工程
+- **numpy** — 数值计算
+- **matplotlib** — EDA 可视化、雷达图、分布图
+- **openpyxl** — 读取 `.xlsx` 输入数据
+
+---
+
+## 项目结构
 
 ```
 Data-Analysis-He/
-├── Rfm_User_Value_Segmentation.ipynb              # Main project notebook (full pipeline, reference implementation)
-├── Rfm_User_Value_Segmentation_Handcrafted.ipynb  # Independent from-scratch re-implementation (cross-verification)
-├── data/schema.md                                 # Field dictionary (data schema)
-├── figures/                                       # Generated analysis charts (EDA / radar / ROI)
-├── Project_Deep_Dive.docx                         # Detailed project interpretation (supporting doc)
-├── README.md                                      # This file
-├── requirements.txt                               # Python dependencies
-├── .gitignore                                     # Ignore data / temp files for privacy
+├── Rfm_User_Value_Segmentation.ipynb              # 项目主版 Notebook（完整流水线，参考实现）
+├── Rfm_User_Value_Segmentation_Handcrafted.ipynb  # 独立手写重实现（交叉验证）
+├── data/schema.md                                 # 数据字段字典（数据 schema 说明）
+├── figures/                                       # 分析图表输出（EDA / 雷达图 / ROI）
+├── Project_Deep_Dive.docx                         # 项目深度解读文档（辅助材料）
+├── README.md                                      # 本文件
+├── requirements.txt                               # Python 依赖清单
+├── .gitignore                                     # 忽略数据 / 临时文件，保护隐私
 └── LICENSE                                        # MIT License
 ```
 
-### File Descriptions
+### 文件说明
 
-| File | Description |
-|------|-------------|
-| `Rfm_User_Value_Segmentation.ipynb` | **Main notebook** — the complete analysis pipeline: quality checks → feature engineering → EDA → segmentation → profiling → ROI estimation |
-| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **Handcrafted notebook** — an independent from-scratch re-implementation of the same methodology |
-| `data/schema.md` | Field dictionary for the input dataset (types, meaning, RFM-I mapping) |
-| `figures/` | Generated analysis charts: EDA distributions, correlation matrix, segment distribution, segment radar, ROI comparison |
-| `Project_Deep_Dive.docx` | A deep-dive write-up explaining the business context, method rationale, and results |
+| 文件 | 说明 |
+| --- | --- |
+| `Rfm_User_Value_Segmentation.ipynb` | **主版 Notebook** —— 完整分析流水线：质量检查 → 特征工程 → EDA → 分层 → 画像 → ROI 测算 |
+| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **手写版 Notebook** —— 对同一方法论的独立从零重实现 |
+| `data/schema.md` | 数据字段字典（字段类型、含义、RFM-I 映射关系） |
+| `figures/` | 分析图表：EDA 分布、相关性矩阵、分层分布、分层雷达、ROI 对比 |
+| `Project_Deep_Dive.docx` | 深度解读文档：业务背景、方法依据与结果说明 |
 
-### Which notebook to read?
+### 应该看哪个 Notebook？
 
-The repository intentionally ships **two parallel notebooks covering the same methodology from different angles** — they are complementary, not duplicates:
+本仓库**有意提供两份并行的 Notebook**，从不同角度覆盖同一方法论——它们互为补充，而非重复：
 
-| Notebook | Role |
-|----------|------|
-| `Rfm_User_Value_Segmentation.ipynb` | **Main / reference implementation.** A complete, well-commented pipeline that tells the full story end-to-end (quality audit → feature engineering → EDA → segmentation → profiling → ROI). Reads `data/user_personalized_features.xlsx`. |
-| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **From-scratch re-implementation.** Written independently to cross-verify the methodology and demonstrate reproducible coding without reference. Reads `data/user_personalized_features.csv`. |
+| Notebook | 定位 |
+| --- | --- |
+| `Rfm_User_Value_Segmentation.ipynb` | **主版 / 参考实现**。完整、注释清晰的分析流水线，讲述从质量审计 → 特征工程 → EDA → 分层 → 画像 → ROI 的完整故事。读取 `data/user_personalized_features.xlsx`。 |
+| `Rfm_User_Value_Segmentation_Handcrafted.ipynb` | **从零重实现**。不参照主版独立编写，用于交叉验证方法论，并展示可复现的编码能力。读取 `data/user_personalized_features.csv`。 |
 
-Both produce equivalent segment-level conclusions and corroborate each other. To follow the analysis step by step, start with the main notebook; to sanity-check the method against a clean independent re-implementation, compare with the handcrafted one.
+两份 Notebook 得出等价的分层结论，彼此印证。想按步骤跟进分析，先从主版开始；想用一份独立干净的实现交叉校验方法，请对照手写版。
 
 ---
 
-## How to Run
+## 如何运行
 
-### 1. Environment Setup
+### 1. 环境准备
 
 ```bash
-# (Recommended) create and activate a virtual environment
+# （推荐）创建并激活虚拟环境
 python -m venv venv
 source venv/bin/activate        # Linux/macOS
-# venv\Scripts\activate         # Windows
+# venv\Scripts\activate       # Windows
 
-# Install dependencies
+# 安装依赖
 pip install -r requirements.txt
 ```
 
-### 2. Prepare the Data
+### 2. 准备数据
 
-> **Note:** The original raw data is **not included** in this repository for privacy reasons (see [Data Source & Privacy](#data-source--privacy)).
+> **注意：** 出于隐私保护，原始数据**未包含**在本仓库中（详见 [数据来源与隐私](#数据来源与隐私)）。
 
-| Notebook | Expected file (relative to repo root) |
-|----------|---------------------------------------|
-| Main (`Rfm_User_Value_Segmentation.ipynb`) | `data/user_personalized_features.xlsx` |
-| Handcrafted (`Rfm_User_Value_Segmentation_Handcrafted.ipynb`) | `data/user_personalized_features.csv` |
+| Notebook | 预期数据文件（相对仓库根目录） |
+| --- | --- |
+| 主版（`Rfm_User_Value_Segmentation.ipynb`） | `data/user_personalized_features.xlsx` |
+| 手写版（`Rfm_User_Value_Segmentation_Handcrafted.ipynb`） | `data/user_personalized_features.csv` |
 
-Just drop your data file into the `data/` directory with the expected name — both notebooks load these **relative paths automatically, no code changes needed**. The expected schema (1,000 rows × 14 columns) is documented in [data/schema.md](data/schema.md):
+将数据文件放入 `data/` 目录并命名为预期文件名即可——两份 Notebook 均通过**相对路径自动加载，无需修改代码**。预期字段（1000 行 × 14 列）见 [data/schema.md](data/schema.md)：
 
 `User_ID, Age, Gender, Location, Income, Interests, Last_Login_Days_Ago, Purchase_Frequency, Average_Order_Value, Total_Spending, Product_Category_Preference, Time_Spent_on_Site_Minutes, Pages_Viewed, Newsletter_Subscription`
 
-### 3. Run
+### 3. 运行
 
-Open `Rfm_User_Value_Segmentation.ipynb` in Jupyter and execute all cells. Output charts are written to `output_dir`.
-
----
-
-## Key Findings
-
-1. **Clean, well-structured data.** The dataset (1,000 users × 14 features) had no missing values and no age outliers, allowing analysis to proceed without heavy cleaning.
-
-2. **Diverse user behaviour.** I_Score (engagement depth) ranged from 0.00 to 98.83 and Friction from 0.10 to 49.00, confirming meaningful behavioural differences across users.
-
-3. **Clear value segments.** Users were partitioned into distinct value segments (e.g. core / potential / low-value users), each with a distinctive RFM-I radar profile, enabling targeted treatment.
-
-4. **Interest-match gap.** Initial `Interest_Match` (user interest vs. purchased category overlap) was only ~0%, highlighting a rich opportunity for personalised recommendation.
-
-5. **Optimised RFM-I strategy beats classic RFM in ROI.** Simulated campaign ROI over a ¥10,000 budget:
-
-   | Strategy | Target Users | Cost | Marginal ROI |
-   |----------|--------------|------|--------------|
-   | A: Traditional RFM | 200 | ¥2,000 | **4.0%** |
-   | B: Optimised RFM-I | 159 (incl. 89 newly discovered potential users) | ¥1,590 (15.9% budget used) | **33.5%** |
-
-   The optimised strategy both **cuts cost** and **unlocks high-potential users** that classic RFM overlooks.
+在 Jupyter 中打开 `Rfm_User_Value_Segmentation.ipynb` 并依次执行所有单元格，图表将输出到 `figures/` 目录。
 
 ---
 
-## Data Source & Privacy
+## 关键发现
 
-- The original data file (`user_personalized_features.xlsx`) and any raw CSV data are **not uploaded** to this repository to protect user privacy and business data.
-- All personal identifiers in the analysis are **pseudo-anonymised** (users referred to as `#1`, `#2`, ...).
-- To reproduce the work, use your own locally available dataset with the same schema, or generate a synthetic equivalent.
+1. **数据干净规范。** 数据集（1000 行 × 14 列）无缺失值、无年龄异常值，无需大量清洗即可直接分析。
+
+2. **用户行为差异显著。** I_Score（意向深度）取值 0.00~98.83，Friction（转化摩擦）0.10~49.00，不同用户的购买行为差异明显。
+
+3. **价值分层清晰。** 用户被细分为 15 类人群（核心价值用户 / 潜力用户 / 低价值用户等），每类人群拥有独特的 RFM-I 雷达画像，可针对性施策。
+
+4. **人货匹配存在缺口。** 初始 `Interest_Match`（用户兴趣与购买品类重叠度）仅为约 0%，提示个性化推荐存在巨大优化空间。
+
+5. **优化 RFM-I 策略 ROI 显著优于经典 RFM。** 在 10000 元预算下的模拟投放结果：
+
+   | 策略 | 目标用户数 | 成本 | 边际 ROI |
+   | --- | --- | --- | --- |
+   | A：传统 RFM 前 20% | 200 | 2000 元 | **4.0%** |
+   | B：优化 RFM-I | 159（含 89 名新挖掘的潜力用户） | 1590 元（预算使用率 15.9%） | **33.5%** |
+
+   优化策略**既降低了成本**，又**激活了经典 RFM 遗漏的高潜力用户**。
+
+---
+
+## 数据来源与隐私
+
+- 原始数据文件（`user_personalized_features.xlsx`）及任何原始 CSV 数据**均不上传**本仓库，以保护用户隐私与业务数据；
+- 分析中的个人标识均做了**脱敏处理**（用户以 `#1`、`#2`... 形式指代）；
+- 如需复现，请使用本地相同字段结构的数据集，或自行生成等价合成数据。
 
 ---
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). Copyright (c) 2026 **He Langjie**.
-*（内容由AI生成，仅供参考）*
+本项目采用 [MIT License](LICENSE) 开源许可。Copyright (c) 2026 **He Langjie**。
