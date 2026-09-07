@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data files (privacy: raw data is intentionally excluded)
+*.xlsx
+*.xls
+*.csv
+*.csv.gz
+*.parquet
+*.feather
+
+# Analysis outputs / generated figures
+rfm_analysis/
+output/
+*.png
+*.jpg
+*.jpeg
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
